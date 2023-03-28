@@ -4,18 +4,48 @@ import { RxClipboardCopy } from "react-icons/rx";
 const aipage = () => {
   const [activeButton, setActiveButton] = useState("hindi");
 
-  const [formdata, setformdata] = useState({
-    language: "hindi",
-    message: "",
-  });
+  const [formData, setFormData] = useState({ language: "hindi", text: "" });
+  const [error, seterror] = useState('')
+  const [shownotification, setshownotification] = useState(false)
+  const [translation, settranslation] = useState('')
 
-  const handleInputChange = (e) => {
-    setformdata({
-      ...formdata,
-      [e.target.name]: e.target.value,
-    });
-    console.log(formdata)
+  const handleLanguageChange = (event) => {
+    setFormData({ ...formData, language: event.target.value });
   };
+
+  const handleTextChange = (event) => {
+    setFormData({ ...formData, text: event.target.value });
+    seterror('')
+  };
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault()
+    if(!formData.text) {
+        seterror('Kindly enter a text');
+        return
+    }
+    translate();
+  }
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(translation)
+    .then(() => displayNotification())
+    .catch((err) => console.log(err))
+  }
+
+  const displayNotification = () => {
+    setshownotification(true)
+    setTimeout(() => {
+        setshownotification(false)
+    }, 3000);
+  }
+  //     console.log(formData)
+
+  const translate = () => {
+
+  }
+
+
 
   return (
     <div>
@@ -199,6 +229,7 @@ const aipage = () => {
       </aside>
 
       <div className="p-4 sm:ml-64 flex flex-col justify-between h-screen">
+        {/* //div 1 */}
         <div className="p-4 border-2 border-gray-300 border-dashed rounded-lg dark:border-gray-700">
           <h1 className="text-[20px] flex text-center justify-center font-mono">
             Hello Manuel
@@ -209,8 +240,8 @@ const aipage = () => {
           <p className="text-[13px] absolute top-1 left-1 flex text-center justify-center font-bold">
             Translated Text
           </p>
-          <p className="absolute top-1 right-1">
-            <RxClipboardCopy />
+          <p onClick={handleCopy} className="absolute top-1 right-1">
+            <RxClipboardCopy  />
           </p>
 
           <p className="pt-7">hello world</p>
@@ -218,119 +249,134 @@ const aipage = () => {
           {/* <p className="absolute top-[1] left-[50px]">Item copied to clipboard!</p> */}
         </div>
 
-        <div className="p-4 w-full space-y-4 flex flex-col gap-3 items-center justify-center  ">
-         
+        <div className="p-4 space-y-4 flex flex-col gap-3 items-center justify-center  ">
           <form action="">
+            <div className="flex justify-center items-center flex-col">
+              <div className=" relative w-full ">
 
-          <div className="relative w-full">
-            <textarea
-              rows={3}
-              name="message"
-              placeholder="enter a word / sentence to be translated"
-              onChange={handleInputChange}
-              type="text"
-              className="border py-2  resize-none w-full border-gray-500 bg-white h-[80px] md:h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-            />
+              { error &&
+                 <p className="text-red-500 text-sm py-2 font-normal"> {error} </p>
+              } 
 
-            <div className="absolute bottom-2 right-2 text-gray-400 text-xs">
-              <span>1</span>/100
-            </div>
-          </div>
-
-
-
-            <div className=" p-4 w-full gap-x-5 flex flex-wrap flex-row max-w-sm text-center gap-3 items-center justify-center">
-              <div
-                className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
-                  activeButton === "hindi" ? "active" : ""
-                }`}
-                onClick={() => setActiveButton("hindi")}
-              >
-                <input
-                  type="radio"
-                  value="hindi"
-                  onClick={handleInputChange}
-                  id="hindi"
-                  name="language"
-                  className="hidden"
+                <textarea
+                  rows={3}
+                  name="message"
+                  value={formData.text}
+                  placeholder="enter a word / sentence to be translated"
+                  onChange={handleTextChange}
+                  type="text"
+                  className="border w-full p-3 relative resize-none  border-gray-500 bg-white focus:outline-none"
                 />
-                <label htmlFor="hindi">Hindi</label>
+
+                <div className="absolute bottom-2 right-2 text-gray-400 text-xs">
+                  <span>1</span>/100
+                </div>
               </div>
 
-              <div
-                className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
-                  activeButton === "chinese" ? "active" : ""
-                }`}
-                onClick={() => setActiveButton("chinese")}
-              >
-                <input
-                  type="radio"
-                  value="chinese"
-                  onChange={handleInputChange}
-                  id="chinese"
-                  name="language"
-                  className="hidden"
-                />
-                <label htmlFor="chinese">chinese</label>
-              </div>
+              <div className=" p-4 w-full gap-x-5 flex flex-wrap  max-w-sm text-center gap-3 items-center justify-center">
+                <div
+                  className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
+                    activeButton === "hindi" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveButton("hindi")}
+                >
+                  <input
+                    type="radio"
+                    defaultChecked={formData.language === "hindi"}
+                    onChange={handleLanguageChange}
+                    checked={formData.language === "hindi"}
+                    value="hindi"
+                    id="hindi"
+                    name="language"
+                    className="hidden"
+                  />
+                  <label htmlFor="hindi">Hindi</label>
+                </div>
 
-              <div
-                className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
-                  activeButton === "japanese" ? "active" : ""
-                }`}
-                onClick={() => setActiveButton("japanese")}
-              >
-                <input
-                  type="radio"
-                  value="japanese"
-                  onChange={handleInputChange}
-                  id="japanese"
-                  name="language"
-                  className="hidden"
-                />
-                <label htmlFor="japanese">japanese</label>
-              </div>
+                <div
+                  className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
+                    activeButton === "chinese" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveButton("chinese")}
+                >
+                  <input
+                    type="radio"
+                    onChange={handleLanguageChange}
+                    checked={formData.language === "chinese"}
+                    value="chinese"
+                    id="chinese"
+                    name="language"
+                    className="hidden"
+                  />
+                  <label htmlFor="chinese">chinese</label>
+                </div>
 
-              <div
-                className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
-                  activeButton === "german" ? "active" : ""
-                }`}
-                onClick={() => setActiveButton("german")}
-              >
-                <input
-                  type="radio"
-                  value="german"
-                  onChange={handleInputChange}
-                  id="german"
-                  name="language"
-                  className="hidden"
-                />
-                <label htmlFor="german">german</label>
-              </div>
+                <div
+                  className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
+                    activeButton === "japanese" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveButton("japanese")}
+                >
+                  <input
+                    type="radio"
+                    onChange={handleLanguageChange}
+                    checked={formData.language === "chinese"}
+                    value="japanese"
+                    id="japanese"
+                    name="language"
+                    className="hidden"
+                  />
+                  <label htmlFor="japanese">japanese</label>
+                </div>
 
-              <div
-                className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
-                  activeButton === "yoruba" ? "active" : ""
-                }`}
-                onClick={() => setActiveButton("yoruba")}
-              >
-                <input
-                  type="radio"
-                  value="yoruba"
-                  onChange={handleInputChange}
-                  id="yoruba"
-                  name="language"
-                  className="hidden"
-                />
-                <label htmlFor="yoruba">Yoruba</label>
+                <div
+                  className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
+                    activeButton === "german" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveButton("german")}
+                >
+                  <input
+                    type="radio"
+                    onChange={handleLanguageChange}
+                    checked={formData.language === "german"}
+                    value="german"
+                    id="german"
+                    name="language"
+                    className="hidden"
+                  />
+                  <label htmlFor="german">german</label>
+                </div>
+
+                <div
+                  className={`bg-sky-300 text-white px-4 py-2 accent-pink-500 rounded-full flex gap-x-1 ${
+                    activeButton === "yoruba" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveButton("yoruba")}
+                >
+                  <input
+                    type="radio"
+                    onChange={handleLanguageChange}
+                    checked={formData.language === "yoruba"}
+                    value="yoruba"
+                    id="yoruba"
+                    name="language"
+                    className="hidden"
+                  />
+                  <label htmlFor="yoruba">Yoruba</label>
+                </div>
               </div>
             </div>
           </form>
-          <button className="bg-gray-200 border relative border-black w-5/12 max-w-screen-md hover:bg-black hover:text-white text-black font-mono py-2 px-4 rounded">
+          <button onClick={handleOnSubmit} 
+          className="bg-gray-200 border relative border-black w-5/12 max-w-screen-md hover:bg-black hover:text-white text-black font-mono py-2 px-4 rounded">
             Translate
           </button>
         </div>
       </div>
+
+      <div className={`notification ${shownotification ? 'active' : ''}`}>copied to clipboard!</div>
+
+
     </div>
   );
 };

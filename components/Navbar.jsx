@@ -39,7 +39,7 @@ const Navbar = () => {
         </Link>
         <ul className="hidden sm:flex">
          <li className="p-2">  <Link href='/home'> Home </Link> </li>
-         <li className="p-2">  <Link href='/home'> Try Transl-X </Link> </li>
+         <li className="p-2">  <Link href='/aipage'> Try Transl-X </Link> </li>
          <li className="p-2">  <Link href='/testimonies'> Testimonies </Link> </li>
          <li className="p-2">  <Link href='/home'> Sponsors </Link> </li>
          <li className="p-2">  <Link href='/home'> Footer </Link> </li>
@@ -62,7 +62,7 @@ const Navbar = () => {
         }>
         <ul >
          <li onClick={handleNav} className="p-4">  <Link href='/'> Home </Link> </li>
-         <li onClick={handleNav} className="p-4">  <Link href='/'> Try Transl-X </Link> </li>
+         <li onClick={handleNav} className="p-4">  <Link href='/aipage'> Try Transl-X </Link> </li>
          <li onClick={handleNav} className="p-4">  <Link href='/'> Testimonies </Link> </li>
          <li onClick={handleNav} className="p-4">  <Link href='/home'> Sponsors </Link> </li>
          <li onClick={handleNav} className="p-4">  <Link href='/home'> Footer </Link> </li>

@@ -1,13 +1,67 @@
 import React from "react";
 import { useState } from "react";
 import { RxClipboardCopy } from "react-icons/rx";
+import { Configuration, OpenAIApi } from "openai";
+import { BeatLoader } from "react-spinners";
 const aipage = () => {
   const [activeButton, setActiveButton] = useState("hindi");
 
   const [formData, setFormData] = useState({ language: "hindi", text: "" });
-  const [error, seterror] = useState('')
-  const [shownotification, setshownotification] = useState(false)
-  const [translation, settranslation] = useState('')
+  const [error, seterror] = useState("");
+  const [shownotification, setshownotification] = useState(false);
+  const [translation, settranslation] = useState("");
+  const [loading, setloading] = useState(false )
+
+  //openai config
+
+  const configuration = new Configuration({
+    apiKey: "psk-g5b22ZK4mplAUi40SpRST3BlbkFJ7Y8OT9Pak6aOu1vQyMGI",
+  });
+  const openai = new OpenAIApi(configuration);
+
+
+  const translate = async () => {
+    const { language, text } = formData;
+    const apiKey = "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"
+    const url = "https://api.openai.com/v1/engines/text-davinci-003/completions";
+    const body = {
+      prompt: `Translate this into ${language}: ${text}`,
+      temperature: 0.3,
+      max_tokens: 100,
+      top_p: 1.0,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+    };
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+  
+      const data = await response.json();
+  
+      console.log(data.choices[0].text);
+      const translatedText = data.choices[0].text.trim() 
+      console.log(translatedText)
+      setloading(false)
+      settranslation(translatedText)
+      
+    } catch (error) {
+      console.error(error);
+    }
+
+
+
+
+  };
+
+  //openai config
 
   const handleLanguageChange = (event) => {
     setFormData({ ...formData, language: event.target.value });
@@ -15,38 +69,37 @@ const aipage = () => {
 
   const handleTextChange = (event) => {
     setFormData({ ...formData, text: event.target.value });
-    seterror('')
+    seterror("");
   };
 
   const handleOnSubmit = (e) => {
-    e.preventDefault()
-    if(!formData.text) {
-        seterror('Kindly enter a text');
-        return
+    e.preventDefault();
+    if (!formData.text) {
+      seterror("Kindly enter a text");
+      return;
     }
+    setloading(true)
     translate();
-  }
+
+  };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(translation)
-    .then(() => displayNotification())
-    .catch((err) => console.log(err))
-  }
+    navigator.clipboard
+      .writeText(translation)
+      .then(() => displayNotification())
+      .catch((err) => console.log(err));
+  };
 
   const displayNotification = () => {
-    setshownotification(true)
+    setshownotification(true);
     setTimeout(() => {
-        setshownotification(false)
+      setshownotification(false);
     }, 3000);
-  }
+  };
   //     console.log(formData)
 
-  const translate = () => {
-
-  }
-
-
-
+ 
+  
   return (
     <div>
       <button
@@ -239,12 +292,12 @@ const aipage = () => {
         <div className="p-4 relative border-2 border-gray-300 flex   rounded-lg bg-green-100">
           <p className="text-[13px] absolute top-1 left-1 flex text-center justify-center font-bold">
             Translated Text
-          </p>
+       </p>
           <p onClick={handleCopy} className="absolute top-1 right-1">
-            <RxClipboardCopy  />
+            <RxClipboardCopy />
           </p>
 
-          <p className="pt-7">hello world</p>
+          <p className="pt-7">{ loading ? <BeatLoader size={12} color={'blue'}/>  : translation}</p>
 
           {/* <p className="absolute top-[1] left-[50px]">Item copied to clipboard!</p> */}
         </div>
@@ -253,10 +306,12 @@ const aipage = () => {
           <form action="">
             <div className="flex justify-center items-center flex-col">
               <div className=" relative w-full ">
-
-              { error &&
-                 <p className="text-red-500 text-sm py-2 font-normal"> {error} </p>
-              } 
+                {error && (
+                  <p className="text-red-500 text-sm py-2 font-normal">
+                    {" "}
+                    {error}{" "}
+                  </p>
+                )}
 
                 <textarea
                   rows={3}
@@ -282,7 +337,6 @@ const aipage = () => {
                 >
                   <input
                     type="radio"
-                    defaultChecked={formData.language === "hindi"}
                     onChange={handleLanguageChange}
                     checked={formData.language === "hindi"}
                     value="hindi"
@@ -367,18 +421,21 @@ const aipage = () => {
               </div>
             </div>
           </form>
-          <button onClick={handleOnSubmit} 
-          className="bg-gray-200 border relative border-black w-5/12 max-w-screen-md hover:bg-black hover:text-white text-black font-mono py-2 px-4 rounded">
+          <button
+            onClick={handleOnSubmit}
+            className="bg-gray-200 border relative border-black w-5/12 max-w-screen-md hover:bg-black hover:text-white text-black font-mono py-2 px-4 rounded"
+          >
             Translate
           </button>
         </div>
       </div>
 
-      <div className={`notification ${shownotification ? 'active' : ''}`}>copied to clipboard!</div>
-
-
+      <div className={`notification ${shownotification ? "active" : ""}`}>
+        copied to clipboard!
+      </div>
     </div>
   );
 };
 
 export default aipage;
+

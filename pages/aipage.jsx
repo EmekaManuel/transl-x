@@ -22,7 +22,7 @@ const aipage = () => {
 
   const translate = async () => {
     const { language, text } = formData;
-    const apiKey = "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"
+    const apiKey = "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"
     const url = "https://api.openai.com/v1/engines/text-davinci-003/completions";
     const body = {
       prompt: `Translate this into ${language}: ${text}`,

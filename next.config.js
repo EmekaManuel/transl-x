@@ -10,7 +10,5 @@ module.exports = {
       'platform.openai.com'
     ]
   },
-  env: {
-    customKey: "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",
-  },
+
 }

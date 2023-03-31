@@ -8,7 +8,7 @@ const Hero = ({heading, message}) => {
         <div className='p-5 text-white z-[2] mt-[-10rem]'>
             <h2 className='text-5xl font-bold'>{heading}</h2>
             <h2 className='py-5 text-xl'>{message}</h2>
-            <button className='px-8 py-2 border  '>explore</button>
+            <button className='px-8 py-2 border  '> <a href="/aipage">explore</a></button>
             <h2 className='text-sm sm:text-base underline py-5'>read about transl-x plus</h2>
         </div>
     </div>
